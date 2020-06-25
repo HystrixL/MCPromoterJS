@@ -1,6 +1,6 @@
 var Plugin_Name = 'MCDBedrock';//插件名称
 //版本号遵循Semantic Versioning 2.0.0协议
-var Plugin_Version = 'V1.1.0';//插件版本号
+var Plugin_Version = 'V2.0.0';//插件版本号
 var Plugin_Author = 'XianYu_Hil';//插件作者
 var op = `HWorld123`;//最高权限拥有者
 
@@ -41,8 +41,6 @@ setAfterActListener('onInputText',function(e){
 		//@MCDB help      显示帮助
 		else if(input=='@MCDB help'){
 			runcmd('say §2====================');
-			runcmd('say @MCDB      显示MCDB帮助');
-			runcmd('say @MCDB install      第一次使用MCDB请务必执行一次!');
 			runcmd('say @here      报点');
 			runcmd('say @task <add/remove>      添加/移除任务列表');
 			runcmd('say @sh <命令>      向控制台注入指令');
@@ -53,6 +51,7 @@ setAfterActListener('onInputText',function(e){
 			runcmd('say @speed <speed/normal/倍数>    将随机刻调整为指定倍数');
 			runcmd('say @moblist      列出所有实体');
 			runcmd('say @ki <true/false>      开启/关闭死亡不掉落');
+			runcmd('say @mg <true/false>      开启/关闭生物破坏');
 			runcmd('say @tick <block/circle/remove/list>    添加方形/圆形/移除/列出常加载区块');
 			//runcmd('say @qb      快速备份(自动重启服务器)');
 			runcmd('say §2========================');
@@ -161,6 +160,17 @@ setAfterActListener('onInputText',function(e){
 				runcmd(`say §r§l§f${name}§r§o§9关闭了死亡不掉落`);
 			}
 		}
+		//@mg      生物破坏
+		else if (input.startsWith('@mg ')) {
+			if (input == '@mg true') {
+				runcmd('gamerule mobGriefing true');
+				runcmd(`say §r§l§f${name}§r§o§9开启了生物破坏`);
+			}
+			else if (input == '@mg false') {
+				runcmd('gamerule mobGriefing false');
+				runcmd(`say §r§l§f${name}§r§o§9关闭了生物破坏`);
+			}
+		}
 		//@tick      常加载区块管理
 		else if(input.startsWith('@tick ')){
 			if(input=='@tick block'){
@@ -259,7 +269,7 @@ setBeforeActListener('onInputCommand', function (e) {
 	var cmd = pl.cmd;
 	var name = pl.playername;
 
-	if (!cmd.startsWith('/?') && !cmd.startsWith('/help') && !cmd.startsWith('/list') && !cmd.startsWith('/me') && !cmd.startsWith('/mixer') && !cmd.startsWith('/msg') && !cmd.startsWith('/tell') && !cmd.startsWith('/w') && !cmd.startsWith('/tickingarea list') && !cmd.startsWith('/tp ')) {
+	if (!cmd.startsWith('/?') && !cmd.startsWith('/help') && !cmd.startsWith('/list') && !cmd.startsWith('/me') && !cmd.startsWith('/mixer') && !cmd.startsWith('/msg') && !cmd.startsWith('/tell') && !cmd.startsWith('/w') && !cmd.startsWith('/tickingarea') && !cmd.startsWith('/tp ')) {
 		runcmd(`say ${name} 试图违规使用 ${cmd} 指令，已被阻止`);
 		log(`${name} 试图违规使用 ${cmd} 指令`);
 		setTimeout(`kick ${name}`, 5000);
