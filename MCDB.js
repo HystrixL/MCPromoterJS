@@ -1,6 +1,6 @@
 var Plugin_Name = 'MCDBedrock';//插件名称
 //版本号遵循Semantic Versioning 2.0.0协议
-var Plugin_Version = 'V2.0.0';//插件版本号
+var Plugin_Version = 'V2.1.0';//插件版本号
 var Plugin_Author = 'XianYu_Hil';//插件作者
 var op = `HWorld123`;//最高权限拥有者
 
@@ -53,6 +53,8 @@ setAfterActListener('onInputText',function(e){
 			runcmd('say @ki <true/false>      开启/关闭死亡不掉落');
 			runcmd('say @mg <true/false>      开启/关闭生物破坏');
 			runcmd('say @tick <block/circle/remove/list>    添加方形/圆形/移除/列出常加载区块');
+			runcmd('say @sta <name>    将侧边栏显示切换成指定计分板');
+			runcmd(`say @day    查询当前游戏天数`);
 			//runcmd('say @qb      快速备份(自动重启服务器)');
 			runcmd('say §2========================');
 		}
@@ -202,6 +204,15 @@ setAfterActListener('onInputText',function(e){
 				log(`${name}试图跨权使用@ban ${baner}`);
 			}
 		}
+		//@sta      切换侧边栏显示
+		else if (input.startsWith(`@sta `)) {
+			var ScoreboardName = input.substr(5);
+			runcmd(`scoreboard objectives setdisplay sidebar ${ScoreboardName}`);
+		}
+			
+		else if (input = `@day`) {
+			runcmd(`time query day`);
+		}
 		/*
 		//@qb      快速备份
 		else if(input=='@qb'){
@@ -260,6 +271,16 @@ setBeforeActListener('onServerCmdOutput', function (e) {
 		return true
 	} else {
 		return false
+	}
+});
+
+//天数查询
+setAfterActListener('onServerCmdOutput', function (e) {
+	let pl = JSON.parse(e);
+	var output = pl.output
+	if (output.startsWith(`Day is `)) {
+		var days = output.substr(7);
+		runcmd(`say 现在是第${days}天.`);
 	}
 });
 
