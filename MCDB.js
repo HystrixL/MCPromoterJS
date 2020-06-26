@@ -13,7 +13,7 @@ if (have == null) {
 }
 
 //玩家输入监听
-setAfterActListener('onInputText',function(e){
+setAfterActListener('onInputText', function (e) {
 	var pl = JSON.parse(e);
 	var input = pl.msg;
 	var name = pl.playername;
@@ -24,10 +24,10 @@ setAfterActListener('onInputText',function(e){
 	var uuid = pl.uuid;
 	var botname;
 	var taskname;
-	
-	if(input.startsWith(`@`)){
+
+	if (input.startsWith(`@`)) {
 		//@MCDB      显示简介
-		if(input=='@MCDB'){
+		if (input == '@MCDB') {
 			runcmd('say §2========================');
 			runcmd(`say §c§l ${Plugin_Name} - ${Plugin_Version}`);
 			runcmd(`say §o作者：${Plugin_Author}`);
@@ -36,10 +36,10 @@ setAfterActListener('onInputText',function(e){
 			runcmd('say @MCDB help     显示MCDB帮助');
 			runcmd('say @MCDB install      第一次使用MCDB请务必执行一次!');
 			runcmd('say §2========================');
-			
+
 		}
 		//@MCDB help      显示帮助
-		else if(input=='@MCDB help'){
+		else if (input == '@MCDB help') {
 			runcmd('say §2====================');
 			runcmd('say @here      报点');
 			runcmd('say @task <add/remove>      添加/移除任务列表');
@@ -59,7 +59,7 @@ setAfterActListener('onInputText',function(e){
 			runcmd('say §2========================');
 		}
 		//@MCDB install      安装插件相关组件
-		else if(input=='@MCDB install'){
+		else if (input == '@MCDB install') {
 			runcmd('scoreboard objectives add Dig dummy §l§7挖掘榜');
 			runcmd('scoreboard objectives add Killed dummy §l§7击杀榜');
 			runcmd('scoreboard objectives add Dead dummy §l§7死亡榜');
@@ -67,97 +67,97 @@ setAfterActListener('onInputText',function(e){
 			runcmd('say 已初始化MCDB插件及其相关组件');
 		}
 		//@here      报点
-		else if(input=='@here'){
+		else if (input == '@here') {
 			runcmd('playsound random.levelup @a');
 			runcmd(`say §r§l§f${name}§r§o§9在§r§l§f${world}[${x},${y},${z}]§r§o§9向大家打招呼`);
 		}
 		//@task      操作任务列表
-		else if(input.startsWith('@task ')){
-			if(input.startsWith('@task add ')){
-				taskname=input.substr(10);
+		else if (input.startsWith('@task ')) {
+			if (input.startsWith('@task add ')) {
+				taskname = input.substr(10);
 				runcmd(`scoreboard players set ${taskname} Tasks 1`);
 			}
-			else if(input.startsWith('@task remove ')){
-				taskname=input.substr(13);
+			else if (input.startsWith('@task remove ')) {
+				taskname = input.substr(13);
 				runcmd(`scoreboard players reset ${taskname} Tasks`);
 			}
 		}
 		//@sh <命令>      向服务器控制台注入指令
-		else if(input.startsWith('@sh ')){
+		else if (input.startsWith('@sh ')) {
 			var command = input.substr(4);
 			runcmd(command);
 			//runcmd(`say §r§l§f${name}§r§o§9向控制台注入了§r§l§f/${command}§r§o§9指令`);
 		}
 		//@=<表达式>      计算表达式
-		else if(input.startsWith('@=')){
+		else if (input.startsWith('@=')) {
 			var expression = input.substr(2);
 			var result = eval(expression);
 			runcmd(`say §r§l§7${expression}= §r§l§f${result}`);
 		}
 		//@bot      假人
-		else if(input.startsWith('@bot ')){
-			if(input.startsWith('@bot spawn ')){
+		else if (input.startsWith('@bot ')) {
+			if (input.startsWith('@bot spawn ')) {
 				botname = input.substr(11);
 				runcmd(`execute @a[name=${name}] ~~~ summon minecraft:player bot_${botname}`);
 				runcmd(`tag @e[name=bot_${botname}] add BOT`);
 				runcmd(`execute @a[name=${name}] ~~~ tickingarea add ~~~~~~ loader_${botname}`);
 				runcmd(`say bot_${botname}加入了游戏`);
 			}
-			else if(input.startsWith('@bot kill ')){
+			else if (input.startsWith('@bot kill ')) {
 				botname = input.substr(10);
 				runcmd(`kill @e[name=bot_${botname}]`);
 				runcmd(`tickingarea remove loader_${botname}`);
 				runcmd(`say bot_${botname}退出了游戏`);
 			}
-			else if(input.startsWith('@bot tp ')){
+			else if (input.startsWith('@bot tp ')) {
 				botname = input.substr(8);
 				runcmd(`execute @a[name=${name}] ~~~ tp @e[name=bot_${botname}]`);
 				//runcmd(`say §r§o§9将§r§l§f${name}§r§o§9传送到§r§l§fbot_${botname}`);
 			}
-			else if(input=='@bot list'){
+			else if (input == '@bot list') {
 				runcmd('say §r§o§9服务器内存在§r§l§f @e[tag=BOT] §r§o§9假人');
 			}
 		}
 		//@item      掉落物相关
-		else if(input.startsWith('@item ')){
-			if(input=='@item draw'){
+		else if (input.startsWith('@item ')) {
+			if (input == '@item draw') {
 				runcmd(`tp @e[type=item] @a[name=${name}]`);
 				//runcmd(`say §r§l§f${name}§r§o§9拾取了所有掉落物`);
 			}
-			else if(input=='@item kill'){
+			else if (input == '@item kill') {
 				runcmd('kill @e[type=item]');
 				//runcmd(`say §r§l§f${name}§r§o§9清除了所有掉落物`);
 			}
-			
+
 		}
 		//@speedmgr      随机刻相关
-		else if(input.startsWith('@speed ')){
-			var speed=input.substr(7);
-			if(speed=='fast'){
+		else if (input.startsWith('@speed ')) {
+			var speed = input.substr(7);
+			if (speed == 'fast') {
 				runcmd('gamerule randomtickspeed 1024');
 				runcmd(`say §r§l§f${name}§r§o§9将游戏内随机刻加快了1024倍`);
 			}
-			else if(speed=='normal'){
+			else if (speed == 'normal') {
 				runcmd('gamerule randomtickspeed 1');
 				runcmd(`say §r§l§f${name}§r§o§9将游戏内随机刻恢复正常`);
 			}
-			else{
-				runcmd('gamerule randomtickspeed '+speed);
+			else {
+				runcmd('gamerule randomtickspeed ' + speed);
 				runcmd(`say §r§l§f${name}§r§o§9将游戏内随机刻加快了${speed}倍`);
 			}
-			
+
 		}
 		//@moblist      列出实体
-		else if(input=='@moblist'){
+		else if (input == '@moblist') {
 			runcmd('say §r§o§9发现有实体§r§l§f @e');
 		}
 		//@ki      死亡掉落调整
-		else if(input.startsWith('@ki ')){
-			if(input=='@ki true'){
+		else if (input.startsWith('@ki ')) {
+			if (input == '@ki true') {
 				runcmd('gamerule keepinventory true');
 				runcmd(`say §r§l§f${name}§r§o§9开启了死亡不掉落`);
 			}
-			else if(input=='@ki false'){
+			else if (input == '@ki false') {
 				runcmd('gamerule keepinventory false');
 				runcmd(`say §r§l§f${name}§r§o§9关闭了死亡不掉落`);
 			}
@@ -174,21 +174,21 @@ setAfterActListener('onInputText',function(e){
 			}
 		}
 		//@tick      常加载区块管理
-		else if(input.startsWith('@tick ')){
-			if(input=='@tick block'){
+		else if (input.startsWith('@tick ')) {
+			if (input == '@tick block') {
 				runcmd(`execute @a[name=${name}] ~~~ tickingarea add ~~~~~~`);
 				runcmd(`say §r§l§f${name}§r§o§9将§r§l§f[${x},${y},${z}]§r§o§9所在区块设为常加载区块`);
 			}
-			else if(input=='@tick circle'){
+			else if (input == '@tick circle') {
 				runcmd(`execute @a[name=${name}] ~~~ tickingarea add circle ~~~ 4`);
 				runcmd(`say §r§l§f${name}§r§o§9将以§r§l§f[${x},${y},${z}]§r§o§9为圆心，半径为4的圆所在区块设为常加载区块`);
 			}
-			else if(input=='@tick remove'){
+			else if (input == '@tick remove') {
 				runcmd(`execute @a[name=${name}] ~~~ tickingarea remove ~~~`);
 				runcmd(`say §r§l§f${name}§r§o§9移除了§r§l§f[${x},${y},${z}]§r§o§9所在的常加载区块`);
 			}
-			else if(input=='@tick list'){
-				runcmdAs(uuid,'/tickingarea list');
+			else if (input == '@tick list') {
+				runcmdAs(uuid, '/tickingarea list');
 			}
 		}
 		//@ban      快速封号
@@ -200,7 +200,7 @@ setAfterActListener('onInputText',function(e){
 			}
 			else {
 				runcmd(`say 你无权使用该命令,警告一次`);
-				setTimeout(`kick ${name}`, 5000);
+				setTimeout(function () { `kick ${name}` }, 5000);
 				log(`${name}试图跨权使用@ban ${baner}`);
 			}
 		}
@@ -209,7 +209,7 @@ setAfterActListener('onInputText',function(e){
 			var ScoreboardName = input.substr(5);
 			runcmd(`scoreboard objectives setdisplay sidebar ${ScoreboardName}`);
 		}
-			
+
 		else if (input = `@day`) {
 			runcmd(`time query day`);
 		}
@@ -223,12 +223,13 @@ setAfterActListener('onInputText',function(e){
 			runcmd('stop');
 		}
 		*/
-		else{
+		else {
 			runcmd('say 未知的指令,请输入@MCDB获取帮助');
 		}
 	}
 	//return true;
 });
+
 
 //击杀榜/死亡榜/死亡报点 相关
 setAfterActListener('onMobDie', function (e) {
@@ -237,13 +238,13 @@ setAfterActListener('onMobDie', function (e) {
 	var bsname = pl.mobname;//被杀者名字
 	var world = pl.dimension;
 	//击杀榜
-	if(jsname!=''){
+	if (jsname != '') {
 		runcmd(`scoreboard players add @a[name=${jsname}] Killed 1`);
 	}
-	if(pl.mobtype=="entity.player.name"){
-	var x = pl.XYZ.x;
-	var y = pl.XYZ.y;
-	var z = pl.XYZ.z;		
+	if (pl.mobtype == "entity.player.name") {
+		var x = pl.XYZ.x;
+		var y = pl.XYZ.y;
+		var z = pl.XYZ.z;
 		//死亡榜
 		runcmd(`scoreboard players add @a[tag=!BOT,name=${bsname}] Dead 1`);
 		//死亡报点
@@ -255,8 +256,8 @@ setAfterActListener('onMobDie', function (e) {
 setAfterActListener('onDestroyBlock', function (e) {
 	var pl = JSON.parse(e);
 	var name = pl.playername;
-	if(name!=''){
-	runcmd(`scoreboard players add ${name} Dig 1`);		
+	if (name != '') {
+		runcmd(`scoreboard players add ${name} Dig 1`);
 	}
 });
 
@@ -267,7 +268,7 @@ setBeforeActListener('onServerCmdOutput', function (e) {
 	var result1 = output.search("Killed");
 	var result2 = output.search("Dead");
 	var result3 = output.search("Dig");
-	if (result1 == -1 && result2 == -1 && result3 == -1 ) {
+	if (result1 == -1 && result2 == -1 && result3 == -1) {
 		return true
 	} else {
 		return false
@@ -280,7 +281,7 @@ setAfterActListener('onServerCmdOutput', function (e) {
 	var output = pl.output
 	if (output.startsWith(`Day is `)) {
 		var days = output.substr(7);
-		runcmd(`say 现在是第${days}天.`);
+		runcmd(`say 现在的天数为${days}.`);
 	}
 });
 
@@ -293,7 +294,7 @@ setBeforeActListener('onInputCommand', function (e) {
 	if (!cmd.startsWith('/?') && !cmd.startsWith('/help') && !cmd.startsWith('/list') && !cmd.startsWith('/me') && !cmd.startsWith('/mixer') && !cmd.startsWith('/msg') && !cmd.startsWith('/tell') && !cmd.startsWith('/w') && !cmd.startsWith('/tickingarea') && !cmd.startsWith('/tp ')) {
 		runcmd(`say ${name} 试图违规使用 ${cmd} 指令，已被阻止`);
 		log(`${name} 试图违规使用 ${cmd} 指令`);
-		setTimeout(`kick ${name}`, 5000);
+		setTimeout(function(){runcmd(`kick ${name}`)}, 5000);
 		return false;
 	} else {
 		return true;
