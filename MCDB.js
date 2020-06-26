@@ -1,6 +1,6 @@
 var Plugin_Name = 'MCDBedrock';//插件名称
 //版本号遵循Semantic Versioning 2.0.0协议
-var Plugin_Version = 'V2.1.0';//插件版本号
+var Plugin_Version = 'V2.2.0';//插件版本号
 var Plugin_Author = 'XianYu_Hil';//插件作者
 var op = `HWorld123`;//最高权限拥有者
 
@@ -200,7 +200,7 @@ setAfterActListener('onInputText', function (e) {
 			}
 			else {
 				runcmd(`say 你无权使用该命令,警告一次`);
-				setTimeout(function () { `kick ${name}` }, 5000);
+				setTimeout(function () { `kick ${name} 试图越权使用@ban指令,自动踢出` }, 5000);
 				log(`${name}试图跨权使用@ban ${baner}`);
 			}
 		}
@@ -281,7 +281,7 @@ setAfterActListener('onServerCmdOutput', function (e) {
 	var output = pl.output
 	if (output.startsWith(`Day is `)) {
 		var days = output.substr(7);
-		runcmd(`say 现在的天数为${days}.`);
+		runcmd(`say 现在的天数为${days}`);
 	}
 });
 
@@ -294,7 +294,7 @@ setBeforeActListener('onInputCommand', function (e) {
 	if (!cmd.startsWith('/?') && !cmd.startsWith('/help') && !cmd.startsWith('/list') && !cmd.startsWith('/me') && !cmd.startsWith('/mixer') && !cmd.startsWith('/msg') && !cmd.startsWith('/tell') && !cmd.startsWith('/w') && !cmd.startsWith('/tickingarea') && !cmd.startsWith('/tp ')) {
 		runcmd(`say ${name} 试图违规使用 ${cmd} 指令，已被阻止`);
 		log(`${name} 试图违规使用 ${cmd} 指令`);
-		setTimeout(function(){runcmd(`kick ${name}`)}, 5000);
+		setTimeout(function(){runcmd(`kick ${name} 试图违规使用指令${cmd}，自动踢出`)}, 5000);
 		return false;
 	} else {
 		return true;
