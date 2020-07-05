@@ -1,6 +1,6 @@
-const Plugin_Name = 'MCDBedrock';//插件名称
+﻿const Plugin_Name = 'MCDBedrock';//插件名称
 //版本号遵循Semantic Versioning 2.0.0协议
-const Plugin_Version = 'V2.2.0';//插件版本号
+const Plugin_Version = 'V2.3.1';//插件版本号
 const Plugin_Author = 'XianYu_Hil';//插件作者
 const op = `HWorld123`;//最高权限拥有者
 
@@ -359,7 +359,7 @@ setAfterActListener('onLoadName', function (e) {
 			log(`时隔${days}天${hours}时${minutes}分 玩家${je.playername}再次进入了服务器`)
 			setTimeout(function () {
 				var lgc = `,现在距离你上次登出服务器过去了${days}天${hours}时${minutes}分`;
-				runcmd(`say 欢迎回到HIC!${je.playername}${lgc}`)
+				runcmd(`say 欢迎回到HIC！ ${je.playername}${lgc}`)
 			}, 16000);
 			havaplayer = true;
 		} else if (i == ii && lgj.lgt.sz[i].id != je.playername && havaplayer == false) {
@@ -390,7 +390,7 @@ setAfterActListener('onPlayerLeft', function (e) {
 	}
 });
 
-log('***MCDBedrock已装载完成      用法:@MCDE');
+log(`*******${Plugin_Name} - ${Plugin_Version} 已装载完成      用法:@MCDE`)
 /*
 log('***here已装载完成      用法:@here');
 log('***serverhelper已装载完成      用法:@sh <指令>');
