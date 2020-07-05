@@ -1,8 +1,8 @@
-var Plugin_Name = 'MCDBedrock';//插件名称
+const Plugin_Name = 'MCDBedrock';//插件名称
 //版本号遵循Semantic Versioning 2.0.0协议
-var Plugin_Version = 'V2.2.0';//插件版本号
-var Plugin_Author = 'XianYu_Hil';//插件作者
-var op = `HWorld123`;//最高权限拥有者
+const Plugin_Version = 'V2.2.0';//插件版本号
+const Plugin_Author = 'XianYu_Hil';//插件作者
+const op = `HWorld123`;//最高权限拥有者
 
 var have = fileReadAllText('Logininterval.json');
 if (have == null) {
@@ -26,6 +26,9 @@ setAfterActListener('onInputText', function (e) {
 	var taskname;
 
 	if (input.startsWith(`@`)) {
+		//MCDB使用日志
+		log(`[MCDB] ${name} : ${input}`);
+
 		//@MCDB      显示简介
 		if (input == '@MCDB') {
 			runcmd('say §2========================');
@@ -63,6 +66,9 @@ setAfterActListener('onInputText', function (e) {
 			runcmd('scoreboard objectives add Dig dummy §l§7挖掘榜');
 			runcmd('scoreboard objectives add Killed dummy §l§7击杀榜');
 			runcmd('scoreboard objectives add Dead dummy §l§7死亡榜');
+			runcmd('scoreboard objectives add Placed dummy §l§7放置榜');
+			runcmd('scoreboard objectives add Attack dummy §l§7伤害榜');
+			runcmd('scoreboard objectives add Hurt dummy §l§7承伤榜');
 			runcmd('scoreboard objectives add Tasks dummy §l§e服务器摸鱼指南');
 			runcmd('say 已初始化MCDB插件及其相关组件');
 		}
@@ -210,7 +216,7 @@ setAfterActListener('onInputText', function (e) {
 			runcmd(`scoreboard objectives setdisplay sidebar ${ScoreboardName}`);
 		}
 
-		else if (input = `@day`) {
+		else if (input == `@day`) {
 			runcmd(`time query day`);
 		}
 		/*
@@ -238,7 +244,7 @@ setAfterActListener('onMobDie', function (e) {
 	var bsname = pl.mobname;//被杀者名字
 	var world = pl.dimension;
 	//击杀榜
-	if (jsname != '') {
+	if (pl.srctype == "entity.player.name") {
 		runcmd(`scoreboard players add @a[name=${jsname}] Killed 1`);
 	}
 	if (pl.mobtype == "entity.player.name") {
@@ -261,6 +267,32 @@ setAfterActListener('onDestroyBlock', function (e) {
 	}
 });
 
+//放置榜计算
+setAfterActListener('onPlacedBlock', function (e) {
+	var pl = JSON.parse(e);
+	var name = pl.playername;
+	if (name != '') {
+		runcmd(`scoreboard players add ${name} Placed 1`);
+	}
+});
+
+//伤害榜/承伤榜计算
+setAfterActListener('onMobHurt', function (e) {
+	var pl = JSON.parse(e);
+	var hurt = pl.dmcount;//伤害数值
+	var bdname = pl.mobname;//被打者名字
+	var gjname = pl.srcname;//攻击者名字
+
+	//伤害榜
+	if (pl.srctype == "entity.player.name") {
+		runcmd(`scoreboard players add @a[name=${gjname}] Attack ${hurt}`);
+	}
+	//承伤榜
+	if (pl.mobtype == "entity.player.name") {
+		runcmd(`scoreboard players add @a[tag=!BOT,name=${bdname}] Hurt ${hurt}`);
+	}
+});
+
 //屏蔽相关输出
 setBeforeActListener('onServerCmdOutput', function (e) {
 	let pl = JSON.parse(e);
@@ -268,7 +300,10 @@ setBeforeActListener('onServerCmdOutput', function (e) {
 	var result1 = output.search("Killed");
 	var result2 = output.search("Dead");
 	var result3 = output.search("Dig");
-	if (result1 == -1 && result2 == -1 && result3 == -1) {
+	var result4 = output.search("Placed");
+	var result5 = output.search("Attack");
+	var result6 = output.search("Hurt");
+	if (result1 == -1 && result2 == -1 && result3 == -1 && result4 == -1 && result5 == -1 && result6 == -1) {
 		return true
 	} else {
 		return false
@@ -291,10 +326,10 @@ setBeforeActListener('onInputCommand', function (e) {
 	var cmd = pl.cmd;
 	var name = pl.playername;
 
-	if (!cmd.startsWith('/?') && !cmd.startsWith('/help') && !cmd.startsWith('/list') && !cmd.startsWith('/me') && !cmd.startsWith('/mixer') && !cmd.startsWith('/msg') && !cmd.startsWith('/tell') && !cmd.startsWith('/w') && !cmd.startsWith('/tickingarea') && !cmd.startsWith('/tp ')) {
+	if (!cmd.startsWith('/?') && !cmd.startsWith('/help') && !cmd.startsWith('/list') && !cmd.startsWith('/me') && !cmd.startsWith('/mixer') && !cmd.startsWith('/msg') && !cmd.startsWith('/tell') && !cmd.startsWith('/w') && !cmd.startsWith('/tickingarea') && !cmd.startsWith('/tp ') && !cmd.startsWith('/kill')) {
 		runcmd(`say ${name} 试图违规使用 ${cmd} 指令，已被阻止`);
 		log(`${name} 试图违规使用 ${cmd} 指令`);
-		setTimeout(function(){runcmd(`kick ${name} 试图违规使用指令${cmd}，自动踢出`)}, 5000);
+		setTimeout(function () { runcmd(`kick ${name} 试图违规使用指令${cmd}，自动踢出`) }, 5000);
 		return false;
 	} else {
 		return true;
@@ -323,8 +358,8 @@ setAfterActListener('onLoadName', function (e) {
 			let minutes = Math.floor(leavel2 / (60 * 1000));
 			log(`时隔${days}天${hours}时${minutes}分 玩家${je.playername}再次进入了服务器`)
 			setTimeout(function () {
-				var lgc = `,现在距离你上次登出服务器${days}天${hours}时${minutes}分`;
-				runcmd(`say ${je.playername}${lgc}`)
+				var lgc = `,现在距离你上次登出服务器过去了${days}天${hours}时${minutes}分`;
+				runcmd(`say 欢迎回到HIC!${je.playername}${lgc}`)
 			}, 16000);
 			havaplayer = true;
 		} else if (i == ii && lgj.lgt.sz[i].id != je.playername && havaplayer == false) {
