@@ -1,0 +1,18 @@
+{
+  "format_version": 2,
+  "header": {
+    "description": "优化原版Minecraft游戏体验",
+    "name": "HilCloud Carpeter",
+    "uuid": "870e8e03-29c6-2333-be7d-fdff41771ec3",
+    "version": [1, 1, 0],
+    "min_engine_version": [1, 14, 0]
+  },
+  "modules": [
+    {
+      "description": "Not Used",
+      "type": "data",
+      "uuid": "ae38ddf7-2333-4fc9-ae3d-65483ddcb808",
+      "version": [1, 1, 0]
+    }
+  ]
+}
