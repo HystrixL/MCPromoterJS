@@ -118,3 +118,9 @@ V2.6.0
     - 操作常加载区块 ==> @load <block/circle/remove/list>   (原@tick <block/circle/remove/list>)
     - 修改侧边栏显示内容 ==> @show <name>   (原@sta <name>)
     详细请进入游戏使用@MCDB help获取帮助.
+
+V2.6.1
+更新日期：2020.08.03
+==================================
+1、修复侧边栏显示切换失效的bug
+2、支持使用@show null关闭侧边栏显示

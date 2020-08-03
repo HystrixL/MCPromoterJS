@@ -1,6 +1,6 @@
 ﻿//#region 全局变量声明
 const Plugin_Name = 'MCDaemonB';//插件名称
-const Plugin_Version = 'V2.6.0';//插件版本号 遵循Semantic Versioning 2.0.0协议
+const Plugin_Version = 'V2.6.1';//插件版本号 遵循Semantic Versioning 2.0.0协议
 const Plugin_Author = 'XianYu_Hil';//插件作者
 const op = `HWorld123`;//最高权限拥有者
 
@@ -121,7 +121,7 @@ setAfterActListener('onInputText', function (e) {
 			callback(name, '@ki <true/false>      开启/关闭死亡不掉落');
 			callback(name, '@mg <true/false>      开启/关闭生物破坏');
 			callback(name, '@load <block/circle/remove/list>    添加方形/圆形/移除/列出常加载区块');
-			callback(name, '@show <name>    将侧边栏显示切换成指定计分板');
+			callback(name, '@show <name/null>    将侧边栏显示切换成指定计分板/关闭');
 			callback(name, `@day    查询当前游戏天数`);
 			callback(name, `@back    回到死亡地点(不支持跨世界)`);
 			callback(name, `@kill    快速自杀`);
@@ -281,18 +281,24 @@ setAfterActListener('onInputText', function (e) {
 		}
 		//@show      切换侧边栏显示
 		else if (input.startsWith(`@show `)) {
-			let ScoreboardName = input.substr(5);
-			let showName;
-			runcmd(`scoreboard objectives setdisplay sidebar ${ScoreboardName}`);
-			if (ScoreboardName == `Dig`) { showName = `挖掘榜`; }
-			else if (ScoreboardName == `Placed`) { showName = `放置榜`; }
-			else if (ScoreboardName == `Attack`) { showName = `伤害榜`; }
-			else if (ScoreboardName == `Hurt`) { showName = `承伤榜`; }
-			else if (ScoreboardName == `Killed`) { showName = `击杀榜`; }
-			else if (ScoreboardName == `Tasks`) { showName = `待办事项榜`; }
-			else if (ScoreboardName == `Dead`) { showName = `死亡榜` }
-			else { showName = ScoreboardName };
-			callback(`@a`, `已将侧边栏显示更改为${showName}`);
+			let ScoreboardName = input.substr(6);
+			if (ScoreboardName != `null`) {
+				let showName;
+				runcmd(`scoreboard objectives setdisplay sidebar ${ScoreboardName}`);
+				if (ScoreboardName == `Dig`) { showName = `挖掘榜`; }
+				else if (ScoreboardName == `Placed`) { showName = `放置榜`; }
+				else if (ScoreboardName == `Attack`) { showName = `伤害榜`; }
+				else if (ScoreboardName == `Hurt`) { showName = `承伤榜`; }
+				else if (ScoreboardName == `Killed`) { showName = `击杀榜`; }
+				else if (ScoreboardName == `Tasks`) { showName = `待办事项榜`; }
+				else if (ScoreboardName == `Dead`) { showName = `死亡榜` }
+				else { showName = ScoreboardName };
+				callback(`@a`, `已将侧边栏显示更改为${showName}`);
+			}
+			else {
+				runcmd(`scoreboard objectives setdisplay sidebar`);
+				callback(`@a`, `已关闭侧边栏显示`);
+			};
 		}
 		//@day		显示游戏天数
 		else if (input == `@day`) {
