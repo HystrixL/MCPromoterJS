@@ -10,8 +10,7 @@
 *.userosscache
 *.sln.docstates
 
-health.js
-Login interval.js
+Reference/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
