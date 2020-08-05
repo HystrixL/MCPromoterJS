@@ -1,6 +1,6 @@
 ﻿//#region 全局变量声明
 const Plugin_Name = 'MCDaemonB';//插件名称
-const Plugin_Version = 'V2.6.1';//插件版本号 遵循Semantic Versioning 2.0.0协议
+const Plugin_Version = 'V2.9.0';//插件版本号 遵循Semantic Versioning 2.0.0协议
 const Plugin_Author = 'XianYu_Hil';//插件作者
 const op = `HWorld123`;//最高权限拥有者
 
@@ -116,16 +116,17 @@ setAfterActListener('onInputText', function (e) {
 			callback(name, '@bot <spawn/kill/tp> <名称>  生成/移除/传送到指定假人');
 			callback(name, '@bot list      列出所有假人');
 			callback(name, '@item <pick/clear>      拾取/清除所有掉落物');
-			callback(name, '@tick <speed/normal/倍数>    将随机刻调整为指定倍数');
+			callback(name, '@tick <fast/normal/倍数>    将随机刻调整为指定倍数');
 			callback(name, '@moblist      列出所有实体');
 			callback(name, '@ki <true/false>      开启/关闭死亡不掉落');
 			callback(name, '@mg <true/false>      开启/关闭生物破坏');
-			callback(name, '@load <block/circle/remove/list>    添加方形/圆形/移除/列出常加载区块');
+			callback(name, '@load <block/circle/remove>    添加方形/圆形/移除/列出常加载区块');
 			callback(name, '@show <name/null>    将侧边栏显示切换成指定计分板/关闭');
-			callback(name, `@day    查询当前游戏天数`);
-			callback(name, `@back    回到死亡地点(不支持跨世界)`);
+			callback(name, `@day <game/server>    查询游戏内/开服天数`);
+			callback(name, `@back    回到死亡地点`);
 			callback(name, `@kill    快速自杀`);
-			//runcmd('say @qb      快速备份(自动重启服务器)');
+			callback(name, `@qb <make/resume/restart>      快速备份/回档/重启服务器`);
+			callback(name, `@qb time      查询上次qb备份时间`);
 			callback(name, '§2========================');
 		}
 		//@MCDB install      安装插件相关组件
@@ -137,6 +138,8 @@ setAfterActListener('onInputText', function (e) {
 			runcmd('scoreboard objectives add Attack dummy §l§7伤害榜');
 			runcmd('scoreboard objectives add Hurt dummy §l§7承伤榜');
 			runcmd('scoreboard objectives add Tasks dummy §l§e服务器摸鱼指南');
+			//runcmd('scoreboard objectives add Health dummy 生命值');
+			//runcmd('scoreboard objectives setdisplay belowname Health');
 			callback(name, '已初始化MCDB插件及其相关组件');
 		}
 		//@here      报点
@@ -301,11 +304,17 @@ setAfterActListener('onInputText', function (e) {
 			};
 		}
 		//@day		显示游戏天数
-		else if (input == `@day`) {
-			runcmd(`time query day`);
-			setTimeout(function () {
-				callback(`@a`, `现在的天数为${GameDay}`);
-			}, 500);
+		else if (input.startsWith(`@day `)) {
+			if (input == `@day game`) {
+				runcmd(`time query day`);
+				setTimeout(function () {
+					callback(`@a`, `现在的游戏天数为${GameDay}`);
+				}, 500);
+			}
+			else if (input == `@day server`) {
+				let serverDays = getDiffDate('2020-06-25T23:30:00');
+				callback(`@a`, `今天是开服的第${serverDays}天`);
+			}
 		}
 		//@back		返回死亡坐标
 		else if (input == `@back`) {
@@ -370,15 +379,30 @@ setAfterActListener('onInputText', function (e) {
 		else if (input.startsWith(`@qb `)) {
 			if (input == `@qb make`) {
 				callback(`@a`, `服务器将在§l10秒§r后重启，进行备份`);
-				fileWriteLine(`qb_make.txt`, `start`);
-
+				fileWriteAllText(`qbTime.qb`,TimeNow());
+				fileWriteLine(`qbMake.qb`, `start`);
+				setTimeout(function () {		
+					runcmd("stop");
+				}, 10000);
 			}
 			else if (input == `@qb time`) {
-				callback(`@a`, `备份查询在做了在做了.jpg`);
+				let qbTime = fileReadAllText('qbTime.qb');
+				callback(`@a`, `上一个qb备份时间：§l${qbTime}`);
 			}
 			else if (input == `@qb resume`) {
-				callback(`@a`, `备份恢复在做了在做了.jpg`);
+				callback(`@a`, `服务器将在§l10秒§r后重启，进行回档`);
+				fileWriteLine(`qbResume.qb`, `start`);
+				setTimeout(function () {
+					runcmd("stop");
+				}, 10000);
 			}
+			else if (input == `@qb restart`) {
+				callback(`@a`, `服务器将在§l10秒§r后重启`);
+				fileWriteLine(`qbRestart.qb`, `start`);
+				setTimeout(function () {
+					runcmd("stop");
+				}, 10000);
+            }
 		}
 		else {
 			callback(name,'未知的指令,请输入@MCDB获取帮助');
@@ -413,6 +437,8 @@ setAfterActListener('onMobDie', function (e) {
 		callback(`@a`, `§r§l§f${bsname}§r§o§4 死于 §r§l§f${world}[${x},${y},${z}]`);
 		//记录死亡点
 		back(bsname);
+		//重置血量记录
+		//runcmd(`scoreboard players set @a[tag=!BOT,name=${bsname}] Health 20`);
 	}
 	if (bsname.startsWith(`bot_`)) {
 		removeBOT(bsname);
@@ -443,6 +469,7 @@ setAfterActListener('onMobHurt', function (e) {
 	var hurt = pl.dmcount;//伤害数值
 	var bdname = pl.mobname;//被打者名字
 	var gjname = pl.srcname;//攻击者名字
+	//var health = pl.health;//剩余血量
 
 	//伤害榜
 	if (pl.srctype == "entity.player.name") {
@@ -451,6 +478,7 @@ setAfterActListener('onMobHurt', function (e) {
 	//承伤榜
 	if (pl.mobtype == "entity.player.name") {
 		runcmd(`scoreboard players add @a[tag=!BOT,name=${bdname}] Hurt ${hurt}`);
+		//runcmd(`scoreboard players set @a[tag=!BOT,name=${bdname}] Health ${health}`);
 	}
 });
 //#endregion
@@ -465,8 +493,9 @@ setBeforeActListener('onServerCmdOutput', function (e) {
 	var result4 = output.search("Placed");
 	var result5 = output.search("Attack");
 	var result6 = output.search("Hurt");
+	var result7 = output.search("Health");
 
-	if (result1 == -1 && result2 == -1 && result3 == -1 && result4 == -1 && result5 == -1 && result6 == -1) {
+	if (result1 == -1 && result2 == -1 && result3 == -1 && result4 == -1 && result5 == -1 && result6 == -1 && result7 == -1) {
 		return true
 	} else {
 		return false
@@ -498,7 +527,7 @@ setBeforeActListener('onInputCommand', function (e) {
 	}
 });
 
-//#region 玩家上线提示
+//#region 玩家上线
 //玩家登录监听
 setAfterActListener('onLoadName', function (e) {
 	var je = JSON.parse(e);

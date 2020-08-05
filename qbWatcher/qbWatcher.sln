@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30320.27
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MCDBWatcher", "qbWatcher\MCDBWatcher.csproj", "{AB609042-3469-43C8-9128-A443D964C47E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AB609042-3469-43C8-9128-A443D964C47E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB609042-3469-43C8-9128-A443D964C47E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB609042-3469-43C8-9128-A443D964C47E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB609042-3469-43C8-9128-A443D964C47E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BAB6C5E7-6E52-499D-947E-AAC7953841C1}
+	EndGlobalSection
+EndGlobal
