@@ -1,6 +1,6 @@
 ﻿//#region 全局变量声明
 const Plugin_Name = 'MCDaemonB';//插件名称
-const Plugin_Version = 'V2.9.0';//插件版本号 遵循Semantic Versioning 2.0.0协议
+const Plugin_Version = 'V2.10.1';//插件版本号 遵循Semantic Versioning 2.0.0协议
 const Plugin_Author = 'XianYu_Hil';//插件作者
 const op = `HWorld123`;//最高权限拥有者
 
@@ -9,6 +9,9 @@ var back_p = {};
 
 //@kill
 var isSuicide = false;
+
+//UnCheat
+var isUnCheat = true;
 
 //@day
 var GameDay;
@@ -127,6 +130,7 @@ setAfterActListener('onInputText', function (e) {
 			callback(name, `@kill    快速自杀`);
 			callback(name, `@qb <make/resume/restart>      快速备份/回档/重启服务器`);
 			callback(name, `@qb time      查询上次qb备份时间`);
+			callback(name, `@server <survival/creative>		切换至生存/创造服`);
 			callback(name, '§2========================');
 		}
 		//@MCDB install      安装插件相关组件
@@ -404,6 +408,28 @@ setAfterActListener('onInputText', function (e) {
 				}, 10000);
             }
 		}
+		else if (input.startsWith("@server ")) {
+			if (input == "@server survival") {
+				callback(name, `将在3秒后前往生存服`);
+				setTimeout(function () {
+					transferserver(uuid, '120.27.225.98', 19132);
+				}, 3000);
+			}
+			else if (input == "@server creative") {
+				callback(`@a`, `将在3秒后前往创造服`);
+				setTimeout(function () {
+					transferserver(uuid, '120.27.225.98', 23333);
+				}, 3000);
+			}
+		}
+		else if (input.startsWith("@cheat")) {
+			if (input == "@cheat on") {
+				isUnCheat = false;
+			}
+			else if (input == "@cheat off") {
+				isUnCheat = true;
+			}
+		}
 		else {
 			callback(name,'未知的指令,请输入@MCDB获取帮助');
 		}
@@ -513,18 +539,23 @@ setAfterActListener('onServerCmdOutput', function (e) {
 
 //反作弊UnCheatSystem
 setBeforeActListener('onInputCommand', function (e) {
-	var pl = JSON.parse(e);
-	var cmd = pl.cmd;
-	var name = pl.playername;
-
-	if (!cmd.startsWith('/?') && !cmd.startsWith('/help') && !cmd.startsWith('/list') && !cmd.startsWith('/me') && !cmd.startsWith('/mixer') && !cmd.startsWith('/msg') && !cmd.startsWith('/tell') && !cmd.startsWith('/w') && !cmd.startsWith('/tickingarea') && !cmd.startsWith('/tp ')) {
-		callback(`@a`,`${name} 试图违规使用 ${cmd} 指令，已被阻止`);
-		log(`${name} 试图违规使用 ${cmd} 指令`);
-		setTimeout(function () { runcmd(`kick ${name} 试图违规使用指令${cmd}，自动踢出`) }, 5000);
-		return false;
-	} else {
+	if (isUnCheat == true) {
+		var pl = JSON.parse(e);
+		var cmd = pl.cmd;
+		var name = pl.playername;
+		if (!cmd.startsWith('/?') && !cmd.startsWith('/help') && !cmd.startsWith('/list') && !cmd.startsWith('/me') && !cmd.startsWith('/mixer') && !cmd.startsWith('/msg') && !cmd.startsWith('/tell') && !cmd.startsWith('/w') && !cmd.startsWith('/tickingarea') && !cmd.startsWith('/tp ')) {
+			callback(`@a`,`${name} 试图违规使用 ${cmd} 指令，已被阻止`);
+			log(`${name} 试图违规使用 ${cmd} 指令`);
+			setTimeout(function () { runcmd(`kick ${name} 试图违规使用指令${cmd}，自动踢出`) }, 5000);
+			return false;
+		} else {
+			return true;
+		}
+	}
+	else {
 		return true;
 	}
+	
 });
 
 //#region 玩家上线
